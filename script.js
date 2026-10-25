@@ -1,17 +1,11 @@
-```javascript
+
 "use strict";
 
 /* =========================================================
-   GRADEFLOW
-   Home Dashboard Controller
-   Version 1.0
+   GRADEFLOW — HOME DASHBOARD + SUBJECT PROGRESS GRAPHS
    ========================================================= */
 
-
-/* ==================== 1. CONFIGURATION ==================== */
-
 const GradeFlow = (() => {
-
     const STORAGE_KEYS = {
         et: "gradeflow_et_marks",
         sft: "gradeflow_sft_marks",
@@ -23,26 +17,32 @@ const GradeFlow = (() => {
             name: "Engineering Technology",
             latestMarkId: "etLatestMark",
             paperCountId: "etPaperCount",
-            progressLabelId: "etProgressLabel"
+            progressLabelId: "etProgressLabel",
+            canvasId: "dashboardEtChart",
+            emptyId: "dashboardEtEmpty",
+            color: "#60a5fa"
         },
-
         sft: {
             name: "Science for Technology",
             latestMarkId: "sftLatestMark",
             paperCountId: "sftPaperCount",
-            progressLabelId: "sftProgressLabel"
+            progressLabelId: "sftProgressLabel",
+            canvasId: "dashboardSftChart",
+            emptyId: "dashboardSftEmpty",
+            color: "#34d399"
         },
-
         ict: {
             name: "Information & Communication Technology",
             latestMarkId: "ictLatestMark",
             paperCountId: "ictPaperCount",
-            progressLabelId: "ictProgressLabel"
+            progressLabelId: "ictProgressLabel",
+            canvasId: "dashboardIctChart",
+            emptyId: "dashboardIctEmpty",
+            color: "#c084fc"
         }
     };
 
-
-    /* ==================== 2. SAFE DOM HELPERS ==================== */
+    const charts = {};
 
     function getElement(id) {
         return document.getElementById(id);
@@ -50,217 +50,242 @@ const GradeFlow = (() => {
 
     function setText(id, value) {
         const element = getElement(id);
-
-        if (element) {
-            element.textContent = value;
-        }
+        if (element) element.textContent = value;
     }
 
+    function formatNumber(value) {
+        if (!Number.isFinite(Number(value))) return "--";
 
-    /* ==================== 3. STORAGE ==================== */
+        return Number(value).toLocaleString("en-US", {
+            maximumFractionDigits: 2
+        });
+    }
 
-    /*
-       Expected stored format:
-
-       [
-           {
-               "id": "unique-paper-id",
-               "mark": 75,
-               "date": "2026-10-25T10:30:00.000Z",
-               "name": "Paper 1"
-           }
-       ]
-
-       Each subject has its own storage key.
-    */
-
+    /* Read records saved by each subject page */
     function readSubjectMarks(subject) {
         const key = STORAGE_KEYS[subject];
-
-        if (!key) {
-            return [];
-        }
+        if (!key) return [];
 
         try {
-            const rawData = localStorage.getItem(key);
+            const raw = localStorage.getItem(key);
+            if (!raw) return [];
 
-            if (!rawData) {
-                return [];
-            }
+            const records = JSON.parse(raw);
+            if (!Array.isArray(records)) return [];
 
-            const parsedData = JSON.parse(rawData);
-
-            if (!Array.isArray(parsedData)) {
-                return [];
-            }
-
-            return parsedData.filter(item => {
-                return (
-                    item &&
-                    typeof item === "object" &&
-                    Number.isFinite(Number(item.mark)) &&
-                    Number(item.mark) >= 0 &&
-                    Number(item.mark) <= 100
-                );
-            });
-
-        } catch (error) {
-            console.error(
-                `GradeFlow: Unable to read ${subject} marks.`,
-                error
+            return records.filter(item =>
+                item &&
+                typeof item === "object" &&
+                item.mark !== "" &&
+                item.mark !== null &&
+                item.mark !== undefined &&
+                Number.isFinite(Number(item.mark)) &&
+                Number(item.mark) >= 0 &&
+                Number(item.mark) <= 100
             );
-
+        } catch (error) {
+            console.error(`GradeFlow: Could not read ${subject} marks.`, error);
             return [];
         }
     }
-
-
-    /* ==================== 4. SUBJECT STATISTICS ==================== */
 
     function getSubjectStatistics(subject) {
         const marks = readSubjectMarks(subject);
-
         const totalPapers = marks.length;
+        const latestPaper = totalPapers ? marks[totalPapers - 1] : null;
 
-        const latestPaper = totalPapers > 0
-            ? marks[totalPapers - 1]
-            : null;
-
-        const latestMark = latestPaper
-            ? Number(latestPaper.mark)
-            : null;
-
-        const totalMarks = marks.reduce((sum, paper) => {
-            return sum + Number(paper.mark);
-        }, 0);
-
-        const average = totalPapers > 0
-            ? totalMarks / totalPapers
-            : null;
+        const totalMarks = marks.reduce(
+            (sum, paper) => sum + Number(paper.mark),
+            0
+        );
 
         return {
             marks,
             totalPapers,
-            latestMark,
-            average
+            latestMark: latestPaper ? Number(latestPaper.mark) : null,
+            average: totalPapers ? totalMarks / totalPapers : null
         };
     }
 
-
-    /* ==================== 5. UPDATE SUBJECT CARDS ==================== */
-
+    /* Update the ET / SFT / ICT summary cards */
     function updateSubjectCard(subject) {
         const config = SUBJECTS[subject];
+        const stats = getSubjectStatistics(subject);
 
-        if (!config) {
-            return;
-        }
-
-        const statistics = getSubjectStatistics(subject);
-
-        const {
-            totalPapers,
-            latestMark,
-            average
-        } = statistics;
+        if (!config) return;
 
         setText(
             config.latestMarkId,
-            latestMark === null
-                ? "--"
-                : formatNumber(latestMark)
+            stats.latestMark === null ? "--" : formatNumber(stats.latestMark)
         );
 
-        setText(
-            config.paperCountId,
-            String(totalPapers)
-        );
+        setText(config.paperCountId, String(stats.totalPapers));
 
-        if (totalPapers === 0) {
+        if (!stats.totalPapers) {
+            setText(config.progressLabelId, "No papers recorded yet");
+        } else {
             setText(
                 config.progressLabelId,
-                "No papers recorded yet"
+                `Average ${formatNumber(stats.average)}% across ` +
+                `${stats.totalPapers} ${stats.totalPapers === 1 ? "paper" : "papers"}`
             );
-
-            return;
         }
-
-        setText(
-            config.progressLabelId,
-            `Average ${formatNumber(average)}% across ${totalPapers} ${
-                totalPapers === 1 ? "paper" : "papers"
-            }`
-        );
     }
 
+    /* Build a chart only once for each subject */
+    function createSubjectChart(subject) {
+        const config = SUBJECTS[subject];
+        const canvas = getElement(config.canvasId);
 
-    /* ==================== 6. UPDATE DASHBOARD TOTALS ==================== */
+        if (!canvas || typeof Chart === "undefined") return null;
+        if (charts[subject]) return charts[subject];
 
+        const context = canvas.getContext("2d");
+
+        charts[subject] = new Chart(context, {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [{
+                    label: `${config.name} marks`,
+                    data: [],
+                    borderColor: config.color,
+                    backgroundColor: `${config.color}22`,
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.3,
+                    spanGaps: false,
+
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: "#111827",
+                    pointBorderColor: config.color,
+                    pointBorderWidth: 2,
+
+                    /* Green = increase, red = decrease, yellow = unchanged */
+                    segment: {
+                        borderColor: segmentContext => {
+                            const previous = segmentContext.p0.parsed.y;
+                            const current = segmentContext.p1.parsed.y;
+
+                            if (current > previous) return "#22c55e";
+                            if (current < previous) return "#ef4444";
+                            return "#facc15";
+                        }
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 250
+                },
+                interaction: {
+                    intersect: false,
+                    mode: "index"
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: context => ` Mark: ${context.parsed.y}/100`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: "#94a3b8",
+                            maxRotation: 35,
+                            minRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 7
+                        },
+                        border: {
+                            color: "rgba(148, 163, 184, 0.15)"
+                        }
+                    },
+                    y: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            color: "#94a3b8"
+                        },
+                        grid: {
+                            color: "rgba(148, 163, 184, 0.10)"
+                        },
+                        border: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        return charts[subject];
+    }
+
+    /* Refresh one dashboard graph from its localStorage records */
+    function updateSubjectChart(subject) {
+        const config = SUBJECTS[subject];
+        if (!config) return;
+
+        const records = readSubjectMarks(subject);
+        const emptyMessage = getElement(config.emptyId);
+        const chart = createSubjectChart(subject);
+
+        if (emptyMessage) {
+            emptyMessage.classList.toggle("is-hidden", records.length > 0);
+        }
+
+        if (!chart) return;
+
+        chart.data.labels = records.map((paper, index) => {
+            const name = typeof paper.name === "string" ? paper.name.trim() : "";
+            return name || `Paper ${index + 1}`;
+        });
+
+        chart.data.datasets[0].data = records.map(paper => Number(paper.mark));
+        chart.update();
+    }
+
+    /* Dashboard totals: average of every recorded paper */
     function updateOverallStatistics() {
         let totalPapers = 0;
         let totalMarks = 0;
         let subjectsTracked = 0;
 
         Object.keys(SUBJECTS).forEach(subject => {
-            const statistics = getSubjectStatistics(subject);
+            const stats = getSubjectStatistics(subject);
 
-            totalPapers += statistics.totalPapers;
+            totalPapers += stats.totalPapers;
+            totalMarks += stats.marks.reduce(
+                (sum, paper) => sum + Number(paper.mark),
+                0
+            );
 
-            totalMarks += statistics.marks.reduce((sum, paper) => {
-                return sum + Number(paper.mark);
-            }, 0);
-
-            if (statistics.totalPapers > 0) {
-                subjectsTracked++;
-            }
+            if (stats.totalPapers > 0) subjectsTracked++;
         });
 
-        /*
-           Overall average is calculated using all recorded papers.
-
-           Example:
-           ET: 80, 70
-           SFT: 90
-           ICT: 60
-
-           Overall average = (80 + 70 + 90 + 60) / 4
-        */
-
-        const overallAverage = totalPapers > 0
-            ? totalMarks / totalPapers
-            : null;
+        const average = totalPapers ? totalMarks / totalPapers : null;
 
         setText("totalPapers", String(totalPapers));
-
-        setText(
-            "overallAverage",
-            overallAverage === null
-                ? "--"
-                : formatNumber(overallAverage)
-        );
-
+        setText("overallAverage", average === null ? "--" : formatNumber(average));
         setText("subjectsTracked", String(subjectsTracked));
 
-        updateDashboardMessage(
-            totalPapers,
-            subjectsTracked,
-            overallAverage
-        );
+        updateDashboardMessage(totalPapers, subjectsTracked, average);
     }
 
-
-    /* ==================== 7. DASHBOARD MESSAGE ==================== */
-
-    function updateDashboardMessage(
-        totalPapers,
-        subjectsTracked,
-        overallAverage
-    ) {
-        const messageElement = getElement("dashboardMessage");
-
-        if (!messageElement) {
-            return;
-        }
+    function updateDashboardMessage(totalPapers, subjectsTracked, average) {
+        const element = getElement("dashboardMessage");
+        if (!element) return;
 
         let message;
 
@@ -268,66 +293,37 @@ const GradeFlow = (() => {
             message =
                 "Your journey starts with the first paper. " +
                 "Add your marks to begin tracking your progress.";
-
         } else if (subjectsTracked < 3) {
             message =
-                `You have recorded ${totalPapers} ${
-                    totalPapers === 1 ? "paper" : "papers"
-                }. Add marks for your remaining subjects to build ` +
-                "a complete academic overview.";
-
-        } else if (overallAverage >= 75) {
+                `You have recorded ${totalPapers} ` +
+                `${totalPapers === 1 ? "paper" : "papers"}. Add marks for your ` +
+                "remaining subjects to build a complete academic overview.";
+        } else if (average >= 75) {
             message =
                 "Excellent work! Keep building on your progress " +
                 "and aim for your next milestone.";
-
-        } else if (overallAverage >= 50) {
+        } else if (average >= 50) {
             message =
                 "You are building your progress. Review your papers, " +
                 "identify weak areas, and keep improving.";
-
         } else {
             message =
                 "Every paper is a new opportunity. Review your results, " +
                 "focus on difficult topics, and keep moving forward.";
         }
 
-        messageElement.textContent = message;
+        element.textContent = message;
     }
 
-
-    /* ==================== 8. NUMBER FORMATTING ==================== */
-
-    function formatNumber(value) {
-        if (!Number.isFinite(Number(value))) {
-            return "--";
-        }
-
-        return Number(value).toLocaleString("en-US", {
-            maximumFractionDigits: 2
-        });
-    }
-
-
-    /* ==================== 9. REFRESH DASHBOARD ==================== */
-
+    /* Refresh all cards, statistics and graphs */
     function refreshDashboard() {
         Object.keys(SUBJECTS).forEach(subject => {
             updateSubjectCard(subject);
+            updateSubjectChart(subject);
         });
 
         updateOverallStatistics();
     }
-
-
-    /* ==================== 10. STORAGE CHANGE DETECTION ==================== */
-
-    /*
-       When marks are changed in another tab on the same origin,
-       the browser sends a storage event to this page.
-
-       The dashboard refreshes automatically.
-    */
 
     function handleStorageChange(event) {
         if (
@@ -338,45 +334,24 @@ const GradeFlow = (() => {
         }
     }
 
-
-    /* ==================== 11. PAGE VISIBILITY ==================== */
-
-    /*
-       Refresh when the user returns to the dashboard tab.
-    */
-
-    function handleVisibilityChange() {
-        if (document.visibilityState === "visible") {
-            refreshDashboard();
-        }
-    }
-
-
-    /* ==================== 12. INITIALIZATION ==================== */
-
     function init() {
         refreshDashboard();
 
-        window.addEventListener(
-            "storage",
-            handleStorageChange
-        );
+        /* Detect changes made in another browser tab */
+        window.addEventListener("storage", handleStorageChange);
 
-        document.addEventListener(
-            "visibilitychange",
-            handleVisibilityChange
-        );
-
-        /*
-           Useful when the browser restores a previously
-           opened dashboard from its back-forward cache.
-        */
+        /* Refresh when returning from a subject page */
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                refreshDashboard();
+            }
+        });
 
         window.addEventListener("pageshow", refreshDashboard);
+
+        /* Also refresh when the user returns using browser history */
+        window.addEventListener("focus", refreshDashboard);
     }
-
-
-    /* ==================== 13. PUBLIC API ==================== */
 
     return {
         init,
@@ -384,17 +359,10 @@ const GradeFlow = (() => {
         getSubjectStatistics,
         readSubjectMarks
     };
-
 })();
 
-
-/* ==================== 14. START APPLICATION ==================== */
-
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-        GradeFlow.init();
-    });
+    document.addEventListener("DOMContentLoaded", GradeFlow.init);
 } else {
     GradeFlow.init();
 }
-```
