@@ -1,0 +1,540 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#080c16">
+    <meta name="description"
+          content="Track ET, SFT and ICT paper marks, monitor progress, and visualize academic performance.">
+
+    <title>GradeFlow | Student Performance Tracker</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js: Graph visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Main JavaScript -->
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Background Effects -->
+    <div class="background-effects" aria-hidden="true">
+        <div class="glow glow-one"></div>
+        <div class="glow glow-two"></div>
+    </div>
+
+    <!-- Application -->
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <a href="index.html" class="brand" aria-label="GradeFlow Home">
+                <span class="brand-icon">G</span>
+
+                <span class="brand-text">
+                    Grade<span>Flow</span>
+                    <small>STUDENT ANALYTICS</small>
+                </span>
+            </a>
+
+            <div class="sidebar-section">
+                <p class="sidebar-label">WORKSPACE</p>
+
+                <a href="index.html" class="nav-item active"
+                   aria-current="page">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-label">MY SUBJECTS</p>
+
+                <a href="et.html" class="nav-item subject-link">
+                    <span class="subject-dot et-dot"></span>
+                    <span>Engineering Technology</span>
+                    <span class="nav-arrow">↗</span>
+                </a>
+
+                <a href="sft.html" class="nav-item subject-link">
+                    <span class="subject-dot sft-dot"></span>
+                    <span>Science for Technology</span>
+                    <span class="nav-arrow">↗</span>
+                </a>
+
+                <a href="ict.html" class="nav-item subject-link">
+                    <span class="subject-dot ict-dot"></span>
+                    <span>Information Technology</span>
+                    <span class="nav-arrow">↗</span>
+                </a>
+            </div>
+
+            <div class="sidebar-spacer"></div>
+
+            <div class="sidebar-note">
+                <div class="note-icon">✦</div>
+
+                <h3>Small progress.</h3>
+                <h3>Big results.</h3>
+
+                <p>
+                    Every paper is an opportunity to improve.
+                    Keep tracking your progress.
+                </p>
+            </div>
+
+            <div class="sidebar-footer">
+                <span class="status-indicator"></span>
+                <span>YOUR PERSONAL WORKSPACE</span>
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Top Navigation -->
+            <header class="topbar">
+
+                <div class="breadcrumb">
+                    <span>Workspace</span>
+                    <span class="breadcrumb-divider">/</span>
+                    <strong>Dashboard</strong>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <div class="local-save-status" id="saveStatus">
+                        <span class="status-indicator"></span>
+                        <span>Personal workspace</span>
+                    </div>
+
+                    <button class="profile-button"
+                            type="button"
+                            aria-label="Student profile">
+                        <span class="profile-avatar">S</span>
+                        <span class="profile-label">Student</span>
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- Dashboard Heading -->
+            <section class="welcome-section">
+
+                <div class="welcome-copy">
+
+                    <div class="eyebrow">
+                        <span class="eyebrow-line"></span>
+                        YOUR ACADEMIC JOURNEY
+                    </div>
+
+                    <h1>
+                        Track your progress.<br>
+                        <span>Own your future.</span>
+                    </h1>
+
+                    <p class="welcome-description">
+                        Your marks, your progress, your next milestone.
+                        Everything you need to understand your performance
+                        in one place.
+                    </p>
+
+                </div>
+
+                <div class="welcome-decoration" aria-hidden="true">
+                    <div class="decoration-ring ring-one"></div>
+                    <div class="decoration-ring ring-two"></div>
+                    <div class="decoration-center">
+                        <span>↗</span>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- Section Heading -->
+            <section class="section-heading">
+
+                <div>
+                    <p class="section-kicker">PERFORMANCE CENTER</p>
+                    <h2>Your academic overview</h2>
+                    <p class="section-description">
+                        An overview of your three main subjects.
+                    </p>
+                </div>
+
+                <div class="academic-badge">
+                    <span class="badge-dot"></span>
+                    A/L SUBJECTS
+                </div>
+
+            </section>
+
+
+            <!-- Overview Cards -->
+            <section class="overview-grid"
+                     aria-label="Academic performance overview">
+
+                <!-- ET Card -->
+                <article class="overview-card et-card">
+
+                    <div class="card-top">
+
+                        <div class="subject-icon et-icon">ET</div>
+
+                        <span class="card-status">
+                            <span class="mini-dot et-mini-dot"></span>
+                            SUBJECT 01
+                        </span>
+
+                    </div>
+
+                    <div class="card-title-row">
+                        <div>
+                            <h3>Engineering Technology</h3>
+                            <p class="subject-short-name">ET</p>
+                        </div>
+                    </div>
+
+                    <div class="card-metrics">
+
+                        <div class="main-metric">
+                            <span class="metric-label">Latest mark</span>
+
+                            <div class="metric-value">
+                                <span id="etLatestMark">--</span>
+                                <span class="metric-unit">/ 100</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-divider"></div>
+
+                        <div class="secondary-metric">
+                            <span class="metric-label">Papers</span>
+                            <strong id="etPaperCount">0</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="card-bottom">
+
+                        <span class="progress-label" id="etProgressLabel">
+                            No papers recorded yet
+                        </span>
+
+                        <a href="et.html"
+                           class="subject-button et-button">
+                            Open subject <span>↗</span>
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- SFT Card -->
+                <article class="overview-card sft-card">
+
+                    <div class="card-top">
+
+                        <div class="subject-icon sft-icon">SFT</div>
+
+                        <span class="card-status">
+                            <span class="mini-dot sft-mini-dot"></span>
+                            SUBJECT 02
+                        </span>
+
+                    </div>
+
+                    <div class="card-title-row">
+                        <div>
+                            <h3>Science for Technology</h3>
+                            <p class="subject-short-name">SFT</p>
+                        </div>
+                    </div>
+
+                    <div class="card-metrics">
+
+                        <div class="main-metric">
+                            <span class="metric-label">Latest mark</span>
+
+                            <div class="metric-value">
+                                <span id="sftLatestMark">--</span>
+                                <span class="metric-unit">/ 100</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-divider"></div>
+
+                        <div class="secondary-metric">
+                            <span class="metric-label">Papers</span>
+                            <strong id="sftPaperCount">0</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="card-bottom">
+
+                        <span class="progress-label" id="sftProgressLabel">
+                            No papers recorded yet
+                        </span>
+
+                        <a href="sft.html"
+                           class="subject-button sft-button">
+                            Open subject <span>↗</span>
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ICT Card -->
+                <article class="overview-card ict-card">
+
+                    <div class="card-top">
+
+                        <div class="subject-icon ict-icon">ICT</div>
+
+                        <span class="card-status">
+                            <span class="mini-dot ict-mini-dot"></span>
+                            SUBJECT 03
+                        </span>
+
+                    </div>
+
+                    <div class="card-title-row">
+                        <div>
+                            <h3>Information & Communication Technology</h3>
+                            <p class="subject-short-name">ICT</p>
+                        </div>
+                    </div>
+
+                    <div class="card-metrics">
+
+                        <div class="main-metric">
+                            <span class="metric-label">Latest mark</span>
+
+                            <div class="metric-value">
+                                <span id="ictLatestMark">--</span>
+                                <span class="metric-unit">/ 100</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-divider"></div>
+
+                        <div class="secondary-metric">
+                            <span class="metric-label">Papers</span>
+                            <strong id="ictPaperCount">0</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="card-bottom">
+
+                        <span class="progress-label" id="ictProgressLabel">
+                            No papers recorded yet
+                        </span>
+
+                        <a href="ict.html"
+                           class="subject-button ict-button">
+                            Open subject <span>↗</span>
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- Progress Overview -->
+            <section class="progress-section">
+
+                <div class="progress-panel">
+
+                    <div class="panel-heading">
+
+                        <div>
+                            <p class="section-kicker">YOUR JOURNEY</p>
+                            <h2>Performance insights</h2>
+                        </div>
+
+                        <div class="insight-icon">⌁</div>
+
+                    </div>
+
+                    <div class="insight-grid">
+
+                        <div class="insight-item">
+                            <span class="insight-icon-box total-icon">▤</span>
+
+                            <div>
+                                <p>Total papers completed</p>
+                                <strong id="totalPapers">0</strong>
+                            </div>
+                        </div>
+
+                        <div class="insight-item">
+                            <span class="insight-icon-box average-icon">◉</span>
+
+                            <div>
+                                <p>Overall average</p>
+                                <strong>
+                                    <span id="overallAverage">--</span>
+                                    <small id="averageUnit">/ 100</small>
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="insight-item">
+                            <span class="insight-icon-box progress-icon">↗</span>
+
+                            <div>
+                                <p>Subjects tracked</p>
+                                <strong>
+                                    <span id="subjectsTracked">0</span>
+                                    <small>/ 3</small>
+                                </strong>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="insight-footer">
+                        <span class="insight-footer-icon">✦</span>
+
+                        <p id="dashboardMessage">
+                            Your journey starts with the first paper.
+                            Add your marks to begin tracking your progress.
+                        </p>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Subject Navigation -->
+            <section class="quick-access-section">
+
+                <div class="section-heading quick-heading">
+
+                    <div>
+                        <p class="section-kicker">QUICK ACCESS</p>
+                        <h2>Choose your subject</h2>
+                        <p class="section-description">
+                            Open a subject to add marks and view its progress graph.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="quick-access-grid">
+
+                    <a href="et.html" class="quick-access-card et-quick">
+
+                        <div class="quick-card-top">
+                            <span class="quick-subject-icon">ET</span>
+                            <span class="quick-arrow">↗</span>
+                        </div>
+
+                        <div>
+                            <h3>Engineering Technology</h3>
+                            <p>Enter marks & track your progress</p>
+                        </div>
+
+                        <div class="quick-card-footer">
+                            <span>OPEN DASHBOARD</span>
+                            <span>→</span>
+                        </div>
+
+                    </a>
+
+
+                    <a href="sft.html" class="quick-access-card sft-quick">
+
+                        <div class="quick-card-top">
+                            <span class="quick-subject-icon">SFT</span>
+                            <span class="quick-arrow">↗</span>
+                        </div>
+
+                        <div>
+                            <h3>Science for Technology</h3>
+                            <p>Enter marks & track your progress</p>
+                        </div>
+
+                        <div class="quick-card-footer">
+                            <span>OPEN DASHBOARD</span>
+                            <span>→</span>
+                        </div>
+
+                    </a>
+
+
+                    <a href="ict.html" class="quick-access-card ict-quick">
+
+                        <div class="quick-card-top">
+                            <span class="quick-subject-icon">ICT</span>
+                            <span class="quick-arrow">↗</span>
+                        </div>
+
+                        <div>
+                            <h3>Information & Communication Technology</h3>
+                            <p>Enter marks & track your progress</p>
+                        </div>
+
+                        <div class="quick-card-footer">
+                            <span>OPEN DASHBOARD</span>
+                            <span>→</span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- Footer -->
+            <footer class="main-footer">
+
+                <div class="footer-brand">
+                    <span class="footer-brand-icon">G</span>
+                    <span>GradeFlow</span>
+                </div>
+
+                <p>
+                    Built for progress. Designed for your future.
+                </p>
+
+                <span class="footer-version">PERSONAL EDITION</span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
+```
