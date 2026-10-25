@@ -912,3 +912,19 @@ input:focus-visible {
         animation-iteration-count: 1 !important;
     }
 }
+
+/* GradeFlow logo images */
+.brand-icon,
+.footer-brand-icon {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
+.footer-brand-icon {
+    width: 30px;
+    height: 30px;
+}
+
