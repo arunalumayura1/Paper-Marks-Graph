@@ -1,4 +1,4 @@
-```css
+
 /* =========================================================
    GRADEFLOW — PREMIUM STUDENT PERFORMANCE TRACKER
    Main stylesheet | Version 1.0
@@ -2037,6 +2037,197 @@ button:disabled {
     }
 }
 
+/* ==================== DASHBOARD GRAPHS ==================== */
+
+.dashboard-graphs-section {
+    margin-top: 38px;
+}
+
+.dashboard-graphs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.dashboard-graph-card {
+    --graph-color: #a78bfa;
+
+    min-width: 0;
+    padding: 20px;
+
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+}
+
+.dashboard-et-graph {
+    --graph-color: #60a5fa;
+}
+
+.dashboard-sft-graph {
+    --graph-color: #34d399;
+}
+
+.dashboard-ict-graph {
+    --graph-color: #c084fc;
+}
+
+.dashboard-graph-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dashboard-graph-label {
+    display: block;
+    margin-bottom: 5px;
+
+    color: var(--text-secondary);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.dashboard-graph-heading h3 {
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 1.7;
+    font-weight: 700;
+}
+
+.dashboard-graph-badge {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    min-width: 38px;
+    height: 36px;
+    padding: 0 8px;
+
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+
+    color: var(--graph-color);
+    background: rgba(255, 255, 255, 0.035);
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.dashboard-chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 220px;
+}
+
+.dashboard-graph-note {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    margin-top: 15px;
+
+    color: var(--text-secondary);
+    font-size: 9px;
+}
+
+.graph-legend {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-left: 4px;
+    border-radius: 50%;
+}
+
+.graph-legend.green {
+    background: #22c55e;
+}
+
+.graph-legend.red {
+    background: #ef4444;
+}
+
+.graph-legend.yellow {
+    background: #facc15;
+}
+
+.dashboard-graph-empty {
+    margin-top: 10px;
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+
+.dashboard-graph-empty.is-hidden {
+    display: none;
+}
+
+/* Make the welcome banner text clearly visible */
+.welcome-section h1,
+.welcome-section .welcome-description {
+    color: #ffffff;
+}
+
+.welcome-section h1 span {
+    color: #c4b5fd;
+}
+
+.welcome-section .eyebrow {
+    color: #ddd6fe;
+}
+
+.welcome-section .welcome-description {
+    color: #cbd5e1;
+}
+
+/* Preserve readable text throughout the dark sidebar */
+.sidebar .brand-text,
+.sidebar .nav-item,
+.sidebar .sidebar-note h3 {
+    color: #ffffff;
+}
+
+.sidebar .brand-text > span {
+    color: #c4b5fd;
+}
+
+.sidebar .sidebar-label,
+.sidebar .sidebar-note p,
+.sidebar .sidebar-footer {
+    color: #cbd5e1;
+}
+
+/* Responsive graph layout */
+@media (max-width: 1250px) {
+    .dashboard-graphs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .dashboard-graphs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-chart-wrap {
+        height: 240px;
+    }
+}
+
+@media (max-width: 540px) {
+    .dashboard-graphs-section {
+        margin-top: 28px;
+    }
+
+    .dashboard-graph-card {
+        padding: 17px;
+    }
+}
+
 
 /* ==================== END OF STYLESHEET ==================== */
-```
+
