@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#080d1a">
+    <meta name="description" content="Track your A/L Engineering Technology paper marks and monitor your progress.">
+
+    <title>Engineering Technology | GradeFlow</title>
+
+    <link rel="stylesheet" href="et.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="et.js" defer></script>
+</head>
+
+<body>
+    <div class="et-app">
+
+        <!-- Navigation -->
+        <header class="et-header">
+            <a class="et-brand" href="index.html">
+                <span class="et-brand-icon">G</span>
+                <span>Grade<span class="et-brand-highlight">Flow</span></span>
+            </a>
+
+            <a class="et-back-link" href="index.html">
+                <span aria-hidden="true">←</span>
+                Back to Dashboard
+            </a>
+        </header>
+
+        <main class="et-main">
+
+            <!-- Subject Heading -->
+            <section class="et-hero">
+                <div class="et-hero-content">
+                    <div class="et-eyebrow">
+                        <span class="et-status-dot"></span>
+                        YOUR PERFORMANCE TRACKER
+                    </div>
+
+                    <h1>Engineering <span>Technology</span></h1>
+
+                    <p>
+                        Every paper is progress. Record your marks,
+                        track your performance, and keep moving forward.
+                    </p>
+                </div>
+
+                <div class="et-subject-badge" aria-hidden="true">
+                    <span>ET</span>
+                    <small>SUBJECT</small>
+                </div>
+            </section>
+
+            <!-- Statistics -->
+            <section class="et-stats-grid" aria-label="ET statistics">
+
+                <article class="et-stat-card">
+                    <div class="et-stat-top">
+                        <span class="et-stat-label">LATEST MARK</span>
+                        <span class="et-stat-icon">✦</span>
+                    </div>
+
+                    <div class="et-stat-value" id="etLatestMark">—</div>
+                    <div class="et-stat-caption">Out of 100 marks</div>
+                </article>
+
+                <article class="et-stat-card">
+                    <div class="et-stat-top">
+                        <span class="et-stat-label">AVERAGE MARK</span>
+                        <span class="et-stat-icon">↗</span>
+                    </div>
+
+                    <div class="et-stat-value" id="etAverageMark">—</div>
+                    <div class="et-stat-caption">Across all recorded papers</div>
+                </article>
+
+                <article class="et-stat-card">
+                    <div class="et-stat-top">
+                        <span class="et-stat-label">PAPERS COMPLETED</span>
+                        <span class="et-stat-icon">▤</span>
+                    </div>
+
+                    <div class="et-stat-value" id="etPaperCount">0</div>
+                    <div class="et-stat-caption">Papers recorded so far</div>
+                </article>
+
+                <article class="et-stat-card">
+                    <div class="et-stat-top">
+                        <span class="et-stat-label">BEST MARK</span>
+                        <span class="et-stat-icon">♛</span>
+                    </div>
+
+                    <div class="et-stat-value" id="etBestMark">—</div>
+                    <div class="et-stat-caption">Your highest recorded mark</div>
+                </article>
+
+            </section>
+
+            <!-- Graph -->
+            <section class="et-panel et-chart-panel">
+
+                <div class="et-panel-heading">
+                    <div>
+                        <span class="et-section-label">PERFORMANCE ANALYTICS</span>
+                        <h2>Your Progress</h2>
+                        <p>Track how your marks change from paper to paper.</p>
+                    </div>
+
+                    <span class="et-chart-tag">ET · /100</span>
+                </div>
+
+                <div class="et-legend">
+                    <span>
+                        <i class="et-legend-dot et-green"></i>
+                        Improved
+                    </span>
+
+                    <span>
+                        <i class="et-legend-dot et-red"></i>
+                        Decreased
+                    </span>
+
+                    <span>
+                        <i class="et-legend-dot et-yellow"></i>
+                        Unchanged
+                    </span>
+                </div>
+
+                <div class="et-chart-container">
+                    <canvas
+                        id="etChart"
+                        role="img"
+                        aria-label="Graph showing Engineering Technology marks for each paper">
+                    </canvas>
+                </div>
+
+                <div class="et-chart-footer">
+                    <span id="etChartMessage">Your progress will appear here after you add a paper.</span>
+
+                    <button
+                        type="button"
+                        class="et-clear-button"
+                        id="etClearGraph">
+                        <span aria-hidden="true">⌫</span>
+                        Clear Graph
+                    </button>
+                </div>
+
+            </section>
+
+            <!-- Add Paper Form -->
+            <section class="et-panel et-form-panel">
+
+                <div class="et-panel-heading">
+                    <div>
+                        <span class="et-section-label">NEW RECORD</span>
+                        <h2>Add Paper Marks</h2>
+                        <p>Enter your results to update your progress graph.</p>
+                    </div>
+
+                    <span class="et-form-number">01</span>
+                </div>
+
+                <form id="etMarksForm" class="et-marks-form">
+
+                    <div class="et-form-group">
+                        <label for="etPaperName">Paper name</label>
+
+                        <input
+                            type="text"
+                            id="etPaperName"
+                            name="paperName"
+                            placeholder="e.g. Model Paper 01"
+                            maxlength="80"
+                            required>
+
+                        <small>Give this paper a name you can recognize.</small>
+                    </div>
+
+                    <div class="et-form-row">
+
+                        <div class="et-form-group">
+                            <label for="etPaperDate">Paper date</label>
+
+                            <input
+                                type="date"
+                                id="etPaperDate"
+                                name="paperDate"
+                                required>
+                        </div>
+
+                        <div class="et-form-group">
+                            <label for="etPaperMark">Your mark <span>(0–100)</span></label>
+
+                            <input
+                                type="number"
+                                id="etPaperMark"
+                                name="paperMark"
+                                placeholder="Enter mark"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                inputmode="decimal"
+                                required>
+                        </div>
+
+                    </div>
+
+                    <div class="et-form-bottom">
+                        <p class="et-form-note">
+                            <span aria-hidden="true">🔒</span>
+                            Your records are saved in this browser.
+                        </p>
+
+                        <button type="submit" class="et-add-button">
+                            <span aria-hidden="true">＋</span>
+                            Add Paper
+                        </button>
+                    </div>
+
+                    <p
+                        class="et-feedback"
+                        id="etFormMessage"
+                        role="status"
+                        aria-live="polite">
+                    </p>
+
+                </form>
+
+            </section>
+
+            <!-- Paper History -->
+            <section class="et-panel et-history-panel">
+
+                <div class="et-panel-heading">
+                    <div>
+                        <span class="et-section-label">YOUR RECORDS</span>
+                        <h2>Paper History</h2>
+                        <p>Review the marks you have recorded.</p>
+                    </div>
+
+                    <span class="et-history-count" id="etHistoryCount">0 papers</span>
+                </div>
+
+                <div class="et-table-wrapper">
+                    <table class="et-history-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">PAPER</th>
+                                <th scope="col">DATE</th>
+                                <th scope="col">MARK</th>
+                                <th scope="col">CHANGE</th>
+                                <th scope="col">ACTION</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="etHistoryBody">
+                            <tr>
+                                <td colspan="6" class="et-empty-history">
+                                    No papers recorded yet. Add your first paper above!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+            <!-- Footer -->
+            <footer class="et-footer">
+                <a href="index.html">← Dashboard</a>
+
+                <p>
+                    GradeFlow <span>·</span> Engineering Technology
+                </p>
+
+                <span class="et-footer-status">
+                    <i></i> Personal Progress Tracker
+                </span>
+            </footer>
+
+        </main>
+    </div>
+</body>
+</html>
